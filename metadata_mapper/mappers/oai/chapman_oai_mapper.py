@@ -4,8 +4,8 @@ from .oai_mapper import OaiRecord, OaiVernacular
 
 class ChapmanOaiDcRecord(OaiRecord):
 
-    class ChapmanOaiDcWorking(whatever):
-        def working_identifier(self):
+    class WorkingMetadata(OaiRecord.WorkingMetadata):
+        def transform_identifier(self):
             if "identifier" not in self.source_metadata:
                 return
 
