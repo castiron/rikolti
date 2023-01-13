@@ -3,26 +3,21 @@ from typing import Union
 from .oai_mapper import OaiRecord, OaiVernacular
 
 class ChapmanOaiDcRecord(OaiRecord):
-    def map_is_shown_at(self) -> Union[str, None]:
+    @property
+    def is_shown_at(self) -> Union[str, None]:
         return self.identifier_for_image
 
-    def map_is_shown_by(self) -> Union[str, None]:
-        if "type" not in self.source_metadata:
-            return
-
-        type: list[str] = self.source_metadata.get("type", [])
-
-        if not type or type[0].lower() != "image":
+    @property
+    def is_shown_by(self) -> Union[str, None]:
+        if not self.is_image_type():
             return
 
         url: Union[str, None] = self.identifier_for_image
 
         return f"{url.replace('items', 'thumbs')}?gallery=preview" if url else None
 
-    def map_description(self) -> Union[str, None]:
-        breakpoint()
-        return "test"
-
+    @property
+    def description(self) -> Union[str, None]:
         if 'description' not in self.source_metadata:
             return
 
@@ -35,6 +30,14 @@ class ChapmanOaiDcRecord(OaiRecord):
 
         identifiers = [i for i in self.source_metadata.get('identifier') if "context" not in i]
         return identifiers[0] if identifiers else None
+
+    def is_image_type(self) -> bool:
+        if "type" not in self.source_metadata:
+            return False
+
+        type: list[str] = self.source_metadata.get("type", [])
+
+        return type and type[0].lower() == "image"
 
 class ChapmanOaiDcVernacular(OaiVernacular):
     record_cls = ChapmanOaiDcRecord

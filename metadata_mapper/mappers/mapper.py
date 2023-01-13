@@ -99,34 +99,39 @@ class Record(ABC, object):
 
     def UCLDC_map(self) -> dict:
         """
-        Defines mappings from source metdata to UCDLC that are specific
+        Defines mappings from source metadata to UCDLC that are specific
         to this implementation.
 
         All dicts returned by this method up the ancestor chain
         are merged together to produce a final result.
         """
         return {
-            "isShownAt": self.map_is_shown_at(),
-            "isShownBy": self.map_is_shown_by()
+            "is_shown_at": self.is_shown_at,
+            "is_shown_by": self.is_shown_by
         }
 
-    @abstractmethod
-    def map_is_shown_at(self) -> Union[str, None]:
+    @property
+    def is_shown_at(self) -> Union[str, None]:
         pass
 
-    @abstractmethod
-    def map_is_shown_by(self) -> Union[str, None]:
+    @property
+    def is_shown_by(self) -> Union[str, None]:
         pass
+
+    def __getattr__(self, item):
+        if item not in self.source_metadata:
+            return
+        return self.source_metadata.get(item)
 
     # Mapper Helpers
     def collate_subfield(self, field: str, subfield: str) -> list:
-        return [f[subfield] for f in self.source_metadata.get(field, [])]
+        return [f[subfield] for f in getattr(self, field, [])]
 
     def collate_fields(self, fieldlist):
         ''' collate multiple field values into a single list '''
         collated = []
         for field in fieldlist:
-            value = self.source_metadata.get(field)
+            value = getattr(self, field)
             if value:
                 if isinstance(value, str):
                     collated.append(value)

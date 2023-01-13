@@ -1,19 +1,19 @@
 import os
 import settings
+from typing import Union
 
 from lxml import etree
 from sickle import models
 
 from ..mapper import Record, Vernacular
 
-
 class OaiRecord(Record):
     """Superclass for OAI metadata."""
 
     def UCLDC_map(self):
         return {
-            'contributor': self.source_metadata.get('contributor'),
-            'creator': self.source_metadata.get('creator'),
+            'contributor': self.contributor,
+            'creator': self.creator,
             'date': self.collate_fields([
                 "available",
                 "created",
@@ -30,14 +30,14 @@ class OaiRecord(Record):
                 "description",
                 "tableOfContents"
             ]),
-            'extent': self.source_metadata.get('extent'),
+            'extent': self.extent,
             'format': self.collate_fields(["format", "medium"]),
             'identifier': self.collate_fields(
                 ["bibliographicCitation", "identifier"]),
-            'is_shown_by': self.map_is_shown_by(),
-            'is_shown_at': self.map_is_shown_at(),
-            'provenance': self.source_metadata.get('provenance'),
-            'publisher': self.source_metadata.get('publisher'),
+            'is_shown_by': self.is_shown_by,
+            'is_shown_at': self.is_shown_at,
+            'provenance': self.provenance,
+            'publisher': self.publisher,
             'relation': self.collate_fields([
                 "conformsTo",
                 "hasFormat",
@@ -56,11 +56,22 @@ class OaiRecord(Record):
             ]),
             'rights': self.collate_fields(["accessRights", "rights"]),
             'spatial': self.collate_fields(["coverage", "spatial"]),
-            'subject': self.map_subject(),
-            'temporal': self.source_metadata.get('temporal'),
-            'title': self.source_metadata.get('title'),
-            'type': self.source_metadata.get('type')
+            'subject': self.subject,
+            'temporal': self.temporal,
+            'title': self.title,
+            'type': self.type
         }
+
+    @property
+    def subject(self) -> Union[list[dict[str, str]], None]:
+        # https://github.com/calisphere-legacy-harvester/dpla-ingestion/blob/ucldc/lib/mappers/dublin_core_mapper.py#L117-L127
+        value = self.source_metadata.get('subject')
+        if not value:
+            return None
+
+        if isinstance(value, str):
+            value = [value]
+        return [{'name': v} for v in value if v]
 
 
 class OaiVernacular(Vernacular):
