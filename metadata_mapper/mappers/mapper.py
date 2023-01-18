@@ -2,6 +2,7 @@ import os
 import json
 import re
 import boto3
+import types
 
 from abc import ABC, abstractmethod
 from markupsafe import Markup
@@ -120,18 +121,31 @@ class Record(ABC, object):
 
     # Mapper Helpers
     def collate_subfield(self, field: str, subfield: str) -> list:
-        return [f[subfield] for f in self.source_metadata.get(self, field, [])]
+        return [f[subfield] for f in self.source_metadata.get(field, [])]
 
-    def collate_values(self, values):
-        collated = []
+    def compose_list(self, values):
+        composed = []
         for value in values:
             if value:
                 if isinstance(value, str):
-                    collated.append(value)
-                else:
-                    collated.extend(value)
+                    composed.append(value)
+                elif isinstance(value, list):
+                    composed.extend(value)
 
-        return collated
+        return composed
+
+    def compose(self, *args):
+        values = []
+        for arg in args:
+            value = None
+            if isinstance(arg, types.FunctionType):
+                value = arg()
+            elif isinstance(arg, str):
+                value = self.source_metadata.get(arg)
+
+            if value:
+                values.append(value)
+        return self.compose_list(values)
 
     def source_metadata_values(self, *args):
         return [self.source_metadata.get(field) for field in args]

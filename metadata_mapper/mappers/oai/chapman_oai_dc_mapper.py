@@ -6,11 +6,11 @@ class ChapmanOaiDcRecord(OaiRecord):
 
     def UCLDC_map(self):
         return {
-            'description': self.collate_values([
-                self.source_metadata.get('abstract'),
-                self.map_description(),
-                self.source_metadata.get('tableOfContents')
-            ])
+            'description': self.compose(
+                'abstract',
+                self.map_description,
+                'tableOfContents'
+            )
         }
 
     def map_is_shown_at(self) -> Union[str, None]:

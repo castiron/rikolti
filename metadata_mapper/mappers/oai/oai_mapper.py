@@ -14,49 +14,43 @@ class OaiRecord(Record):
         return {
             'contributor': self.source_metadata.get('contributor'),
             'creator': self.source_metadata.get('creator'),
-            'date': self.collate_values(
-                self.source_metadata_values(
-                    'available',
-                    'created',
-                    'date',
-                    'dateAccepted',
-                    'dateCopyrighted',
-                    'dateSubmitted',
-                    'issued',
-                    'modified',
-                    'valid'
-                )
+            'date': self.compose(
+                'available',
+                'created',
+                'date',
+                'dateAccepted',
+                'dateCopyrighted',
+                'dateSubmitted',
+                'issued',
+                'modified',
+                'valid'
             ),
-            'description': self.collate_values(
-                self.source_metadata_values('abstract', 'description', 'tableOfContents')
-            ),
+            'description': self.compose('abstract', 'description', 'tableOfContents'),
             'extent': self.source_metadata.get('extent'),
-            'format': self.collate_values(self.source_metadata_values('format', 'medium')),
-            'identifier': self.collate_values(self.source_metadata_values('bibliographicCitation', 'identifier')),
+            'format': self.compose('format', 'medium'),
+            'identifier': self.compose('bibliographicCitation', 'identifier'),
             'is_shown_by': self.source_metadata.get('is_shown_by'),
             'is_shown_at': self.source_metadata.get('is_shown_at'),
             'provenance': self.source_metadata.get('provenance'),
             'publisher': self.source_metadata.get('publisher'),
-            'relation': self.collate_values(
-                self.source_metadata_values(
-                    'conformsTo',
-                    'hasFormat',
-                    'hasPart',
-                    'hasVersion',
-                    'isFormatOf',
-                    'isPartOf',
-                    'isReferencedBy',
-                    'isReplacedBy',
-                    'isRequiredBy',
-                    'isVersionOf',
-                    'references',
-                    'relation',
-                    'replaces',
-                    'require'
-                )
+            'relation': self.compose(
+                'conformsTo',
+                'hasFormat',
+                'hasPart',
+                'hasVersion',
+                'isFormatOf',
+                'isPartOf',
+                'isReferencedBy',
+                'isReplacedBy',
+                'isRequiredBy',
+                'isVersionOf',
+                'references',
+                'relation',
+                'replaces',
+                'require'
             ),
-            'rights': self.collate_values(self.source_metadata_values('accessRights', 'rights')),
-            'spatial': self.collate_values(self.source_metadata_values('coverage', 'spatial')),
+            'rights': self.compose('accessRights', 'rights'),
+            'spatial': self.compose('coverage', 'spatial'),
             'subject': self.map_subject(),
             'temporal': self.source_metadata.get('temporal'),
             'title': self.source_metadata.get('title'),
