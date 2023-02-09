@@ -82,16 +82,16 @@ class Record(ABC, object):
 
 
     def to_dict(self) -> dict[str, Any]:
-        return self.mapped_metadata
+        return self.mapped_data
 
     def to_UCLDC(self) -> dict[str, Any]:
         """
         Maps source metadata to UCLDC format, saving result to
-        self.mapped_metadata.
+        self.mapped_data.
 
         Returns: dict
         """
-        self.mapped_metadata = {}
+        self.mapped_data = {}
 
         supermaps = [
             super(c, self).UCLDC_map()
@@ -99,10 +99,10 @@ class Record(ABC, object):
             if hasattr(super(c, self), "UCLDC_map")
         ]
         for map in supermaps:
-            self.mapped_metadata = {**self.mapped_metadata, **map}
-        self.mapped_metadata = {**self.mapped_metadata, **self.UCLDC_map()}
+            self.mapped_data = {**self.mapped_data, **map}
+        self.mapped_data = {**self.mapped_data, **self.UCLDC_map()}
 
-        return self.mapped_metadata
+        return self.mapped_data
 
     def UCLDC_map(self) -> dict:
         """
@@ -337,7 +337,7 @@ class Record(ABC, object):
 
         return self
 
-    def copy_prop(self, prop, to_prop, skip_if_exists=[False]):
+    def copy_prop(self, prop, to_prop, no_overwrite=None, skip_if_exists=[False]):
         """
         no_overwrite is specified in one of the enrichment chain items, but is
         not implemented in the dpla-ingestion code.
@@ -1401,7 +1401,7 @@ class Record(ABC, object):
             if not solr_id:
                 # no recognized special id, just has couchdb id
                 hash_id = hashlib.md5()
-                hash_id.update(couch_doc['_id'])
+                hash_id.update(str(couch_doc.get('_id', couch_doc.get('identifier', 'ABC123'))).encode(encoding="UTF-8"))
                 solr_id = hash_id.hexdigest()
             return solr_id
 
