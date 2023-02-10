@@ -20,7 +20,12 @@ def map_endpoint(url):
         'tv_academy_oai_dc': 'oai.tv_academy',
         'yosemite_oai_dc': 'oai.yosemite',
         'up_oai_dc': 'oai.up',
-        'ucsc_oai_dpla': 'oai.ucsc'
+        'ucsc_oai_dpla': 'oai.ucsc',
+        'contentdm_oai_dc': 'oai.contentdm',
+        'arck_oai': 'oai.contentdm.arck',
+        'black_gold_oai': 'oai.contentdm.blackgold',
+        'chico_oai_dc': 'oai.contentdm.chico',
+        'chula_vista_pl_contentdm_oai_dc': 'oai.contentdm.cvpl',
     }
 
     collection_page = url
