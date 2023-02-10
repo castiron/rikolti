@@ -28,7 +28,6 @@ def map_endpoint(url):
         'chula_vista_pl_contentdm_oai_dc': 'oai.contentdm.cvpl',
         'contentdm_oai_dc_get_sound_thumbs': 'oai.contentdm.pepperdine',
         'csudh_contentdm_oai_dc': 'oai.contentdm.csudh'
->>>>>>> 7048da8... Rename oai.ucsc to oai.samvera
     }
 
     collection_page = url
