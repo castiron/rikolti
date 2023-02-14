@@ -521,8 +521,14 @@ class Record(ABC, object):
         # TODO: this won't actually work for deeply nested fields
 
         src_values = self.mapped_data
+        if not src_values:
+            return self
+
         for src_field in src:
-            if src_field not in src_values:
+            if not src_field:
+                continue
+
+            if not isinstance(src_values, dict) or src_field not in src_values:
                 self.enrichment_report.append(
                     f"[lookup]: Source field {src} not in record"
                 )
@@ -710,6 +716,10 @@ class Record(ABC, object):
         2079 times: no parameters
         """
         languages = self.mapped_data.get('language', [])
+
+        if not languages:
+            return self
+
         if isinstance(languages, str):
             languages = [languages]
 
@@ -731,7 +741,7 @@ class Record(ABC, object):
 
             # try to match a language regex
             match = None
-            for regex, iso3 in language_regexes.items():
+            for iso3, regex in language_regexes.items():
                 match = regex.match(language.strip())
                 if match:
                     iso_codes.append(iso3)
@@ -739,7 +749,7 @@ class Record(ABC, object):
 
             # try to match wb_language_regexes
             if not match:
-                for regex, iso3 in wb_language_regexes.items():
+                for iso3, regex in wb_language_regexes.items():
                     if regex.search(language):
                         iso_codes.append(iso3)
 
