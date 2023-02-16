@@ -1,7 +1,7 @@
 from .oai_mapper import OaiRecord, OaiVernacular
 
 
-class UcscRecord(OaiRecord):
+class SamveraRecord(OaiRecord):
 
     def UCLDC_map(self):
         return {
@@ -10,5 +10,5 @@ class UcscRecord(OaiRecord):
         }
 
 
-class UcscVernacular(OaiVernacular):
-    record_cls = UcscRecord
+class SamveraVernacular(OaiVernacular):
+    record_cls = SamveraRecord
