@@ -132,6 +132,9 @@ def map_page(payload, context):
 
     mapped_metadata = [record.to_dict() for record in mapped_records]
     if settings.DATA_DEST == 'local':
+        if payload.get('return_mapping'):
+            return mapped_records
+
         writer.write_local_mapped_metadata(mapped_metadata)
     else:
         writer.write_s3_mapped_metadata([
